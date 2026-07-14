@@ -319,6 +319,8 @@ describe("createCodexDynamicToolBridge", () => {
         },
       ],
     });
+    expect(result.executionStarted).toBe(false);
+    expect(result.executedArguments).toEqual({});
     expect(heartbeatExecute).not.toHaveBeenCalled();
     expect(onAgentToolResult).toHaveBeenCalledWith({
       toolName: HEARTBEAT_RESPONSE_TOOL_NAME,
@@ -670,6 +672,8 @@ describe("createCodexDynamicToolBridge", () => {
       success: false,
       contentItems: [{ type: "inputText", text: "Unknown OpenClaw tool: fuzzplugin_move_angles" }],
     });
+    expect(result.executionStarted).toBe(false);
+    expect(result.executedArguments).toEqual({});
     expect(badExecute).not.toHaveBeenCalled();
   });
 
@@ -2278,6 +2282,7 @@ describe("createCodexDynamicToolBridge", () => {
       frameToolCallId?: string;
       frameImageIdentity?: string;
     } = { value: 0 };
+    let started = true;
     const bridge = createCodexDynamicToolBridge({
       tools: [
         createTool({
@@ -2296,6 +2301,17 @@ describe("createCodexDynamicToolBridge", () => {
       ],
       signal: new AbortController().signal,
       computerContextEpoch,
+      hookContext: {
+        toolExecutionRuntime: {
+          consumeStarted: () => {
+            const value = started;
+            started = false;
+            return value;
+          },
+          peekArguments: () => undefined,
+          peekStarted: () => started,
+        },
+      },
     });
 
     const result = await bridge.handleToolCall({
@@ -2312,6 +2328,7 @@ describe("createCodexDynamicToolBridge", () => {
       { type: "inputText", text: "Tool output unavailable due to post-processing error." },
     ]);
     expect(handler).toHaveBeenCalledOnce();
+    expect(result.executionStarted).toBe(true);
     expect(computerContextEpoch).toEqual({ value: 1 });
   });
 
@@ -2446,6 +2463,8 @@ describe("createCodexDynamicToolBridge", () => {
       success: false,
       contentItems: [{ type: "inputText", text: "failed output" }],
     });
+    expect(result.executionStarted).toBe(true);
+    expect(result.executedArguments).toEqual({ command: "false" });
     expect(result.sideEffectEvidence).toBe(true);
     const event = requireRecord(callArg(handler, 0, 0, "middleware event"), "middleware event");
     expect(event.isError).toBe(true);
@@ -2873,6 +2892,8 @@ describe("createCodexDynamicToolBridge", () => {
       contentItems: [{ type: "inputText", text: "invalid arguments" }],
     });
     expect(result.sideEffectEvidence).toBeUndefined();
+    expect(result.executionStarted).toBe(false);
+    expect(result.executedArguments).toEqual({});
     expect(execute).not.toHaveBeenCalled();
     expect(onToolOutcome).toHaveBeenLastCalledWith({
       toolName: "exec",
@@ -3133,6 +3154,7 @@ describe("createCodexDynamicToolBridge", () => {
     });
 
     expect(result).toEqual(expectInputText("done"));
+    expect(result.executedArguments).toEqual({ command: "pwd", mode: "safe" });
     const beforeEvent = requireRecord(
       callArg(beforeToolCall, 0, 0, "before_tool_call event"),
       "before event",
@@ -3172,6 +3194,41 @@ describe("createCodexDynamicToolBridge", () => {
     });
   });
 
+  it("retains hook-adjusted arguments when dynamic tool execution rejects", async () => {
+    const beforeToolCall = vi.fn(async () => ({ params: { target: "channel:adjusted" } }));
+    initializeGlobalHookRunner(
+      createMockPluginRegistry([{ hookName: "before_tool_call", handler: beforeToolCall }]),
+    );
+    const execute = vi.fn(async () => {
+      throw new Error("delivery rejected");
+    });
+    const bridge = createCodexDynamicToolBridge({
+      tools: [createTool({ name: "message", execute })],
+      signal: new AbortController().signal,
+      hookContext: { runId: "run-rejected" },
+    });
+
+    const result = await handleMessageToolCall(bridge, {
+      action: "send",
+      target: "channel:original",
+      text: "hello",
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.executionStarted).toBe(true);
+    expect(result.executedArguments).toEqual({
+      action: "send",
+      target: "channel:adjusted",
+      text: "hello",
+    });
+    expect(execute).toHaveBeenCalledWith(
+      "call-1",
+      { action: "send", target: "channel:adjusted", text: "hello" },
+      expect.any(AbortSignal),
+      undefined,
+    );
+  });
+
   it("does not execute dynamic tools blocked by before_tool_call", async () => {
     const beforeToolCall = vi.fn(async () => ({
       block: true,
@@ -3203,6 +3260,13 @@ describe("createCodexDynamicToolBridge", () => {
       contentItems: [{ type: "inputText", text: "blocked by policy" }],
     });
     expect(result.sideEffectEvidence).toBeUndefined();
+    expect(result.executionStarted).toBe(false);
+    expect(result.executedArguments).toEqual({
+      action: "send",
+      text: "blocked",
+      provider: "telegram",
+      to: "chat-1",
+    });
     expect(execute).not.toHaveBeenCalled();
     expect(bridge.telemetry.didSendViaMessagingTool).toBe(false);
     await vi.waitFor(() => {
