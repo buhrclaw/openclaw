@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { telegramQaCliRegistration } from "./cli.js";
 import {
+  resolveTelegramQaScenarioIds,
   TELEGRAM_QA_ADAPTER_DEFAULT_SCENARIO_IDS,
-  TELEGRAM_QA_ALL_SCENARIO_IDS,
 } from "./profiles.js";
 
 describe("Telegram QA CLI registration", () => {
@@ -10,6 +10,8 @@ describe("Telegram QA CLI registration", () => {
     expect(telegramQaCliRegistration.adapterFactory?.scenarioIds).toEqual(
       TELEGRAM_QA_ADAPTER_DEFAULT_SCENARIO_IDS,
     );
-    expect(TELEGRAM_QA_ALL_SCENARIO_IDS).not.toContain("channel-chat-baseline");
+    expect(
+      resolveTelegramQaScenarioIds({ providerMode: "mock-openai", profile: "all" }),
+    ).not.toContain("channel-chat-baseline");
   });
 });

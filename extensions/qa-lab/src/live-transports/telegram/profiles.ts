@@ -19,7 +19,7 @@ const TELEGRAM_QA_MOCK_RELEASE_SCENARIO_IDS = [
   "telegram-long-final-reuses-preview",
 ] as const;
 
-export const TELEGRAM_QA_ALL_SCENARIO_IDS = [
+const TELEGRAM_QA_ALL_SCENARIO_IDS = [
   ...TELEGRAM_QA_RELEASE_SCENARIO_IDS,
   "telegram-current-session-status-tool",
   "telegram-tool-only-usage-footer",

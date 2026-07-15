@@ -7,7 +7,7 @@ const DISCORD_QA_ALL_SCENARIO_IDS = [
   "discord-thread-reply-filepath-attachment",
 ] as const;
 
-export const DISCORD_QA_DEFAULT_SCENARIO_IDS = DISCORD_QA_ALL_SCENARIO_IDS.filter(
+const DISCORD_QA_DEFAULT_SCENARIO_IDS = DISCORD_QA_ALL_SCENARIO_IDS.filter(
   (scenarioId) =>
     scenarioId !== "discord-voice-autojoin" &&
     scenarioId !== "discord-status-reactions-tool-only" &&

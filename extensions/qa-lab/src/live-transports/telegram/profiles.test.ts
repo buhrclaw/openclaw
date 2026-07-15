@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  listTelegramQaScenarios,
-  resolveTelegramQaScenarioIds,
-  TELEGRAM_QA_ALL_SCENARIO_IDS,
-} from "./profiles.js";
+import { listTelegramQaScenarios, resolveTelegramQaScenarioIds } from "./profiles.js";
 
 describe("Telegram QA profiles", () => {
   it("keeps release focused and adds the scripted long-final check for mock runs", () => {
@@ -16,9 +12,13 @@ describe("Telegram QA profiles", () => {
   });
 
   it("selects every migrated Telegram scenario through all", () => {
-    expect(resolveTelegramQaScenarioIds({ providerMode: "mock-openai", profile: "all" })).toEqual([
-      ...TELEGRAM_QA_ALL_SCENARIO_IDS,
-    ]);
+    const scenarioIds = resolveTelegramQaScenarioIds({
+      providerMode: "mock-openai",
+      profile: "all",
+    });
+
+    expect(new Set(scenarioIds).size).toBe(scenarioIds.length);
+    expect(scenarioIds).toContain("telegram-long-final-three-chunks");
   });
 
   it("lets explicit scenarios override profile selection", () => {
@@ -45,10 +45,12 @@ describe("Telegram QA profiles", () => {
 
   it("lists the YAML catalog with provider-specific release defaults", () => {
     const scenarios = listTelegramQaScenarios("mock-openai");
+    const allScenarioIds = resolveTelegramQaScenarioIds({
+      providerMode: "mock-openai",
+      profile: "all",
+    });
 
-    expect(scenarios.map(({ id }) => id).toSorted()).toEqual(
-      [...TELEGRAM_QA_ALL_SCENARIO_IDS].toSorted(),
-    );
+    expect(scenarios.map(({ id }) => id).toSorted()).toEqual(allScenarioIds.toSorted());
     expect(
       scenarios.find(({ id }) => id === "telegram-long-final-reuses-preview")?.defaultEnabled,
     ).toBe(true);

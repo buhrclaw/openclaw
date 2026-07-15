@@ -27,7 +27,7 @@ const SLACK_QA_EXPLICIT_SCENARIO_IDS = new Set<string>([
   "slack-table-invalid-blocks-fallback",
 ]);
 
-export const SLACK_QA_DEFAULT_SCENARIO_IDS = SLACK_QA_ALL_SCENARIO_IDS.filter(
+const SLACK_QA_DEFAULT_SCENARIO_IDS = SLACK_QA_ALL_SCENARIO_IDS.filter(
   (scenarioId) => !SLACK_QA_EXPLICIT_SCENARIO_IDS.has(scenarioId),
 );
 
