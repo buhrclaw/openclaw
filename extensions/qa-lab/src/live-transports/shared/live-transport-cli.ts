@@ -156,3 +156,16 @@ export function createLiveTransportQaCliRegistration(
     providerModeHelp: formatQaProviderModeHelp(),
   });
 }
+
+export function createLiveTransportQaAdapterFactory(params: {
+  create: NonNullable<LiveTransportQaCliRegistrationOptions["adapterFactory"]>["create"];
+  id: string;
+  scenarioIds: readonly string[];
+}): NonNullable<LiveTransportQaCliRegistrationOptions["adapterFactory"]> {
+  return {
+    id: params.id,
+    scenarioIds: params.scenarioIds,
+    matches: ({ channelId, driver }) => driver === "live" && channelId === params.id,
+    create: params.create,
+  };
+}

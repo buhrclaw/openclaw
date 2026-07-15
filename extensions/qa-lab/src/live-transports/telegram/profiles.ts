@@ -1,3 +1,4 @@
+// Telegram keeps named command profiles alongside the generic adapter defaults.
 import { readQaScenarioPack } from "../../scenario-catalog.js";
 
 const TELEGRAM_QA_RELEASE_SCENARIO_IDS = [
@@ -28,6 +29,11 @@ export const TELEGRAM_QA_ALL_SCENARIO_IDS = [
   "telegram-long-final-three-chunks",
 ] as const;
 
+export const TELEGRAM_QA_ADAPTER_DEFAULT_SCENARIO_IDS = [
+  "channel-chat-baseline",
+  ...TELEGRAM_QA_ALL_SCENARIO_IDS,
+] as const;
+
 type TelegramQaProfile = "all" | "release";
 
 function resolveTelegramQaProfile(profile: string | undefined): TelegramQaProfile {
@@ -45,12 +51,7 @@ export function resolveTelegramQaScenarioIds(params: {
   providerMode: string;
   scenarioIds?: readonly string[];
 }): string[] {
-  const knownIds = new Set<string>(TELEGRAM_QA_ALL_SCENARIO_IDS);
   if (params.scenarioIds && params.scenarioIds.length > 0) {
-    const unknownIds = params.scenarioIds.filter((id) => !knownIds.has(id));
-    if (unknownIds.length > 0) {
-      throw new Error(`unknown Telegram QA scenario id(s): ${unknownIds.join(", ")}`);
-    }
     return [...params.scenarioIds];
   }
   const profile = resolveTelegramQaProfile(params.profile);

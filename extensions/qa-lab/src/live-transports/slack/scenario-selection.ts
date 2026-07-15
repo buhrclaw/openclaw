@@ -31,6 +31,15 @@ export const SLACK_QA_DEFAULT_SCENARIO_IDS = SLACK_QA_ALL_SCENARIO_IDS.filter(
   (scenarioId) => !SLACK_QA_EXPLICIT_SCENARIO_IDS.has(scenarioId),
 );
 
+export const SLACK_QA_ADAPTER_DEFAULT_SCENARIO_IDS = [
+  "channel-chat-baseline",
+  "channel-canary",
+  "channel-mention-gating",
+  "channel-top-level-reply-shape",
+  "thread-follow-up",
+  "thread-isolation",
+] as const;
+
 export function resolveSlackQaScenarioIds(scenarioIds?: readonly string[]) {
   return scenarioIds?.length ? [...scenarioIds] : [...SLACK_QA_DEFAULT_SCENARIO_IDS];
 }

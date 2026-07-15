@@ -14,6 +14,8 @@ export const DISCORD_QA_DEFAULT_SCENARIO_IDS = DISCORD_QA_ALL_SCENARIO_IDS.filte
     scenarioId !== "discord-thread-reply-filepath-attachment",
 );
 
+export const DISCORD_QA_ADAPTER_DEFAULT_SCENARIO_IDS = DISCORD_QA_DEFAULT_SCENARIO_IDS;
+
 export function resolveDiscordQaScenarioIds(scenarioIds?: readonly string[]) {
   return scenarioIds?.length ? [...scenarioIds] : [...DISCORD_QA_DEFAULT_SCENARIO_IDS];
 }

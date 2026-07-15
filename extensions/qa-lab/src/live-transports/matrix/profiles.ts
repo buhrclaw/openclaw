@@ -1,3 +1,20 @@
+// Matrix keeps named command profiles alongside the generic adapter defaults.
+export const MATRIX_QA_ADAPTER_DEFAULT_SCENARIO_IDS = [
+  "channel-chat-baseline",
+  "channel-canary",
+  "channel-dm-group-routing",
+  "channel-mention-gating",
+  "channel-sender-allowlist",
+  "channel-top-level-reply-shape",
+  "channel-secondary-conversation-isolation",
+  "channel-multi-actor-ordering",
+  "thread-follow-up",
+  "thread-isolation",
+  "thread-reply-override",
+  "dm-shared-session",
+  "dm-per-room-session",
+] as const;
+
 const MATRIX_QA_RELEASE_SCENARIO_IDS = [
   "channel-chat-baseline",
   "matrix-allowlist-hot-reload",

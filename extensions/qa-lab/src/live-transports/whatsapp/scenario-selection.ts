@@ -51,6 +51,15 @@ const WHATSAPP_QA_MOCK_DEFAULT_SCENARIO_IDS = [
   "whatsapp-native-new-command",
 ] as const;
 
+export const WHATSAPP_QA_ADAPTER_DEFAULT_SCENARIO_IDS = [
+  "dm-chat-baseline",
+  "channel-canary",
+  "channel-dm-group-routing",
+  "channel-mention-gating",
+  "channel-top-level-reply-shape",
+  "whatsapp-help-command",
+] as const;
+
 export function resolveWhatsAppQaScenarioIds(params: {
   providerMode: string;
   scenarioIds?: readonly string[];
