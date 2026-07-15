@@ -40,6 +40,6 @@ export const SLACK_QA_ADAPTER_DEFAULT_SCENARIO_IDS = [
   "thread-isolation",
 ] as const;
 
-export function resolveSlackQaScenarioIds(scenarioIds?: readonly string[]) {
+export function resolveSlackQaScenarioIds({ scenarioIds }: { scenarioIds?: readonly string[] }) {
   return scenarioIds?.length ? [...scenarioIds] : [...SLACK_QA_DEFAULT_SCENARIO_IDS];
 }

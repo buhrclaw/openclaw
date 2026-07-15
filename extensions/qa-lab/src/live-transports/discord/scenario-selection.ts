@@ -7,15 +7,13 @@ const DISCORD_QA_ALL_SCENARIO_IDS = [
   "discord-thread-reply-filepath-attachment",
 ] as const;
 
-const DISCORD_QA_DEFAULT_SCENARIO_IDS = DISCORD_QA_ALL_SCENARIO_IDS.filter(
+export const DISCORD_QA_DEFAULT_SCENARIO_IDS = DISCORD_QA_ALL_SCENARIO_IDS.filter(
   (scenarioId) =>
     scenarioId !== "discord-voice-autojoin" &&
     scenarioId !== "discord-status-reactions-tool-only" &&
     scenarioId !== "discord-thread-reply-filepath-attachment",
 );
 
-export const DISCORD_QA_ADAPTER_DEFAULT_SCENARIO_IDS = DISCORD_QA_DEFAULT_SCENARIO_IDS;
-
-export function resolveDiscordQaScenarioIds(scenarioIds?: readonly string[]) {
+export function resolveDiscordQaScenarioIds({ scenarioIds }: { scenarioIds?: readonly string[] }) {
   return scenarioIds?.length ? [...scenarioIds] : [...DISCORD_QA_DEFAULT_SCENARIO_IDS];
 }

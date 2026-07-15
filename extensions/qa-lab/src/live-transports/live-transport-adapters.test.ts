@@ -28,10 +28,10 @@ import { discordQaCliRegistration } from "./discord/cli.js";
 import { DISCORD_QA_DEFAULT_SCENARIO_IDS } from "./discord/scenario-selection.js";
 import { matrixQaCliRegistration } from "./matrix/cli.js";
 import { slackQaCliRegistration } from "./slack/cli.js";
-import { SLACK_QA_DEFAULT_SCENARIO_IDS } from "./slack/scenario-selection.js";
+import { SLACK_QA_ADAPTER_DEFAULT_SCENARIO_IDS } from "./slack/scenario-selection.js";
 import { telegramQaCliRegistration } from "./telegram/cli.js";
 import { whatsappQaCliRegistration } from "./whatsapp/cli.js";
-import { resolveWhatsAppQaScenarioIds } from "./whatsapp/scenario-selection.js";
+import { WHATSAPP_QA_ADAPTER_DEFAULT_SCENARIO_IDS } from "./whatsapp/scenario-selection.js";
 
 const discordQaAdapterFactory = discordQaCliRegistration.adapterFactory;
 const matrixQaAdapterFactory = matrixQaCliRegistration.adapterFactory;
@@ -61,14 +61,12 @@ describe("live transport adapter factories", () => {
     expect(discordQaAdapterFactory.scenarioIds).toEqual(DISCORD_QA_DEFAULT_SCENARIO_IDS);
   });
 
-  it("assigns the canonical live scenario defaults to Slack", () => {
-    expect(slackQaAdapterFactory.scenarioIds).toEqual(SLACK_QA_DEFAULT_SCENARIO_IDS);
+  it("assigns the generic live adapter defaults to Slack", () => {
+    expect(slackQaAdapterFactory.scenarioIds).toEqual(SLACK_QA_ADAPTER_DEFAULT_SCENARIO_IDS);
   });
 
-  it("assigns the canonical live-frontier scenario defaults to WhatsApp", () => {
-    expect(whatsappQaAdapterFactory.scenarioIds).toEqual(
-      resolveWhatsAppQaScenarioIds({ providerMode: "live-frontier" }),
-    );
+  it("assigns the generic live adapter defaults to WhatsApp", () => {
+    expect(whatsappQaAdapterFactory.scenarioIds).toEqual(WHATSAPP_QA_ADAPTER_DEFAULT_SCENARIO_IDS);
   });
 
   it.each([
